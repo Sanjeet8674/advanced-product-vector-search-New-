@@ -10,13 +10,6 @@ pinned: false
 
 ![Project Preview](project_preview.png)
 
-## 🚀 Live Project
-
-[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/Sanjeet8674/advanced-product-vector-search)
-
-**[🔴 View Live Demo](https://huggingface.co/spaces/Sanjeet8674/advanced-product-vector-search)** | **[View Source on GitHub](https://github.com/Sanjeet8674/advanced-product-vector-search-New-)**
-
-> **Note**: This is a robust backend system with a simulated local frontend. To run the "Live" version, follow the local setup instructions below.
 
 ## 📖 Description
 This project is an **AI-Powered Semantic Search Engine** designed to demonstrate advanced vector search capabilities. Unlike traditional keyword matching, this system understands the *context* and *meaning* of user queries using state-of-the-art Natural Language Processing (NLP).
