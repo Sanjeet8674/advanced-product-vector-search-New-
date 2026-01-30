@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Product Search</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #22d3ee;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 600;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            border-radius: 16px;
+            border: 2px solid #334155;
+            background-color: rgba(30, 41, 59, 0.8);
+            color: white;
+            font-size: 1.1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        #results {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+
+        .result-card {
+            background-color: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .result-card:hover {
+            transform: scale(1.02);
+            background-color: #273548;
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .match-score {
+            font-size: 0.9rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            background-color: rgba(34, 211, 238, 0.1);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--text-muted);
+            border-radius: 50%;
+            animation: typing 1s infinite alternate;
+            margin: 0 2px;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            from { transform: translateY(0); opacity: 0.5; }
+            to { transform: translateY(-8px); opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glassmorphism decorative elements */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.4;
+        }
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: -50px;
+            left: -50px;
+        }
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent);
+            bottom: -100px;
+            right: -100px;
+            opacity: 0.2;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="container">
+        <header>
+            <h1>Vector Search</h1>
+            <p class="subtitle">Semantic product search powered by AI embeddings</p>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Try searching 'blue jeans' or 'fast laptop'...">
+            <div class="search-icon">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="typing-indicator">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <div id="results">
+            <!-- Results will appear here -->
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const resultsDiv = document.getElementById('results');
+        const loadingDiv = document.getElementById('loading');
+        let timeoutId;
+
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(timeoutId);
+            const query = e.target.value.trim();
+            
+            if (query.length === 0) {
+                resultsDiv.innerHTML = '';
+                loadingDiv.style.display = 'none';
+                return;
+            }
+
+            loadingDiv.style.display = 'block';
+            resultsDiv.style.opacity = '0.5';
+
+            timeoutId = setTimeout(() => {
+                fetchResults(query);
+            }, 300); // Debounce
+        });
+
+        async function fetchResults(query) {
+            try {
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                loadingDiv.style.display = 'none';
+                resultsDiv.style.opacity = '1';
+                resultsDiv.innerHTML = '';
+
+                if (data.length === 0) {
+                    resultsDiv.innerHTML = '<div style="text-align:center; color: #94a3b8;">No results found.</div>';
+                    return;
+                }
+
+                data.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'result-card';
+                    
+                    // Convert score to percentage
+                    const percent = Math.round(item.score * 100);
+                    
+                    card.innerHTML = `
+                        <div class="product-name">${item.name}</div>
+                        <div class="match-score">${percent}% Match</div>
+                    `;
+                    resultsDiv.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+                loadingDiv.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
