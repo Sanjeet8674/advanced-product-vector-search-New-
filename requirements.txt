@@ -1,0 +1,7 @@
+faker
+pandas
+sentence-transformers
+mysql-connector-python
+numpy
+boto3
+scikit-learn
