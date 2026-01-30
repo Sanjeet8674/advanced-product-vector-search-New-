@@ -1,0 +1,22 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.DS_Store
+
+# Data
+data/*.db
+data/*.csv
+# Allow keeping the data folder structure if needed, but usually we just ignore contents. 
+# actually, let's ignore the files but keep the folder.
+!data/.gitkeep
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
